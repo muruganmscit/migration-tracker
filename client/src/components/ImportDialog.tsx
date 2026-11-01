@@ -51,7 +51,7 @@ function Columns({ title, rows, file }: { title: string; rows: [string, string][
   return (
     <details className="border-t border-slate-900/5 pt-3">
       <summary className="text-sm font-medium text-slate-700 cursor-pointer">{title} columns</summary>
-      <button type="button" className="text-sm text-indigo-600 underline inline-flex items-center gap-1 mt-2" onClick={() => downloadTemplate(file)}>
+      <button type="button" className="text-sm text-blue-700 underline inline-flex items-center gap-1 mt-2" onClick={() => downloadTemplate(file)}>
         <Download size={14} /> Download {file} template
       </button>
       <div className={`${tableWrap} mt-2`}>
@@ -116,7 +116,7 @@ export default function ImportDialog({ onClose, onImported }: { onClose: () => v
           New applications send no email. Updates that change an existing application's phase email its recipients, as usual.
         </p>
         {error && (
-          <div role="alert" className="rounded-xl bg-rose-100 text-rose-700 text-sm px-3 py-2">
+          <div role="alert" className="rounded-md bg-rose-100 text-rose-700 text-sm px-3 py-2">
             {error}
           </div>
         )}

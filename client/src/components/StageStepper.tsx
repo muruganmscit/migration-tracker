@@ -27,15 +27,15 @@ export default function StageStepper({ app }: { app: Application }) {
         const ended = phase.end && shortDate(app[phase.end]);
         return (
           <li key={phase.key} className="flex-1 min-w-[96px] relative flex flex-col items-center text-center" aria-current={active ? "step" : undefined}>
-            {i > 0 && <span className={`absolute top-4 right-1/2 w-full h-0.5 ${!archived && i <= currentIndex ? "bg-indigo-500" : "bg-slate-500/40"}`} />}
+            {i > 0 && <span className={`absolute top-3.5 right-1/2 w-full h-0.5 ${!archived && i <= currentIndex ? "bg-blue-500" : "bg-slate-500/40"}`} />}
             <span
-              className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold ${
+              className={`relative z-10 flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold ${
                 active && archived
                   ? "bg-slate-500 text-white"
                   : done || active
-                    ? "bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/30"
+                    ? "bg-blue-700 text-white"
                     : "bg-surface text-slate-500 border border-slate-500/60"
-              } ${active && !archived && !finished ? "ring-4 ring-indigo-500/20" : ""}`}
+              } ${active && !archived && !finished ? "ring-4 ring-blue-600/20" : ""}`}
             >
               {active && archived ? <Lock size={14} /> : done || finished ? <Check size={15} /> : i + 1}
             </span>

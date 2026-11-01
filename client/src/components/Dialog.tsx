@@ -26,7 +26,7 @@ export default function Dialog({ title, onClose, children }: { title: string; on
         e.preventDefault();
         onClose();
       }}
-      className="panel m-auto w-[calc(100%-2rem)] max-w-2xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-3xl p-6 text-slate-900 backdrop:bg-slate-900/50"
+      className="panel m-auto w-[calc(100%-2rem)] max-w-2xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-lg p-6 text-slate-900 backdrop:bg-black/50"
     >
       <div className="flex items-start justify-between gap-4 mb-5">
         <h2 id="dialog-title" className="text-lg font-semibold text-slate-900 break-words min-w-0">

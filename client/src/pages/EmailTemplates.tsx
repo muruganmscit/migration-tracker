@@ -40,7 +40,7 @@ export default function EmailTemplatesPage() {
       <PageHeader title="Email Templates" subtitle="The emails recipients receive: when Cleanup starts, when Migration and Validation start, a final notice when Adoption completes, and if an application is archived or overridden." />
 
       <div className={card}>
-        <h3 className="text-base font-semibold mb-5 text-slate-800">Placeholders</h3>
+        <h3 className="text-sm font-semibold mb-5 text-slate-800">Placeholders</h3>
         <div className={tableWrap}>
         <table className={table}>
           <thead>
@@ -53,7 +53,7 @@ export default function EmailTemplatesPage() {
             {PLACEHOLDERS.map((p) => (
               <tr key={p.key}>
                 <td className={td}>
-                  <code className="text-indigo-600">{`{{${p.key}}}`}</code>
+                  <code className="text-blue-700">{`{{${p.key}}}`}</code>
                 </td>
                 <td className={td}>{p.description}</td>
               </tr>
@@ -65,7 +65,7 @@ export default function EmailTemplatesPage() {
 
       {templates.map((t) => (
         <div className={card} key={t.event}>
-          <h3 className="text-base font-semibold mb-4 text-slate-800">{statusLabel(t.event)}</h3>
+          <h3 className="text-sm font-semibold mb-4 text-slate-800">{statusLabel(t.event)}</h3>
           <div>
             <label className="flex flex-col gap-1.5 text-sm text-slate-500">
               Subject

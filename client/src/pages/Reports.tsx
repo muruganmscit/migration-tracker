@@ -62,7 +62,7 @@ export default function Reports() {
       </div>
 
       <div className={card}>
-        <h3 className="text-base font-semibold mb-4 text-slate-800">Issues by application</h3>
+        <h3 className="text-sm font-semibold mb-4 text-slate-800">Issues by application</h3>
         <div className={tableWrap}>
         <table className={table}>
           <thead>
@@ -89,7 +89,7 @@ export default function Reports() {
       </div>
 
       <div className={card}>
-        <h3 className="text-base font-semibold mb-5 text-slate-800">Email send volume by event</h3>
+        <h3 className="text-sm font-semibold mb-5 text-slate-800">Email send volume by event</h3>
         <div className={tableWrap}>
         <table className={table}>
           <thead>

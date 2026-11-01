@@ -49,7 +49,7 @@ export default function BulkActionDialog({
   return (
     <Dialog title={archive ? `Archive ${count}?` : `Start Cleanup for ${count}?`} onClose={onClose}>
       <form onSubmit={confirm} className="space-y-4">
-        <ul className="text-sm text-slate-700 max-h-48 overflow-y-auto rounded-xl bg-slate-50 border border-edge px-3 py-2 space-y-1">
+        <ul className="text-sm text-slate-700 max-h-48 overflow-y-auto rounded-md bg-slate-50 border border-edge px-3 py-2 space-y-1">
           {apps.map((a) => (
             <li key={a.id} className="break-words">
               <span className="font-mono text-xs text-slate-500 mr-2">{a.appId}</span>
@@ -76,7 +76,7 @@ export default function BulkActionDialog({
           <p className="text-sm text-slate-500">Recipients of each application are emailed that Cleanup has started.</p>
         )}
         {error && (
-          <div role="alert" className="rounded-xl bg-rose-100 text-rose-700 text-sm px-3 py-2">
+          <div role="alert" className="rounded-md bg-rose-100 text-rose-700 text-sm px-3 py-2">
             {error}
           </div>
         )}

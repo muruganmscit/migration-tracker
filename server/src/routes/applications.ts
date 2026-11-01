@@ -292,6 +292,9 @@ applicationsRouter.post("/:id/repos", async (req, res) => {
   const application = await prisma.application.findUnique({ where: { id: applicationId } });
   if (!application) return res.status(404).json({ error: "Application not found" });
   if (application.status === "ARCHIVED") return res.status(400).json({ error: "This application is archived" });
+  if (await prisma.repo.findUnique({ where: { applicationId_name: { applicationId, name } } })) {
+    return res.status(400).json({ error: `A repo named "${name}" already exists in this application` });
+  }
   const repo = await prisma.repo.create({
     data: { applicationId, name, sourceUrl, targetProject, technology, technologyVersion, pipelineType, notes },
   });

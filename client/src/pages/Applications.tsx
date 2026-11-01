@@ -121,7 +121,7 @@ export default function Applications() {
           <button className={btnSecondary} disabled={archivable.length === 0} onClick={() => setBulkAction("archive")}>
             <Archive size={15} /> Archive ({archivable.length})
           </button>
-          <button className="text-sm text-indigo-600 underline" onClick={() => setSelected(new Map())}>
+          <button className="text-sm text-blue-700 underline" onClick={() => setSelected(new Map())}>
             Clear selection
           </button>
           <span className="text-xs text-slate-500 w-full">
@@ -185,7 +185,7 @@ export default function Applications() {
 
       {uploadSummary && <ImportResult summary={uploadSummary} onClose={() => setUploadSummary(null)} />}
 
-      <div className={"panel overflow-x-auto rounded-3xl"}>
+      <div className={"panel overflow-x-auto rounded-lg"}>
       <table className={table}>
         <thead>
           <tr>
@@ -193,7 +193,7 @@ export default function Applications() {
               <input
                 type="checkbox"
                 aria-label="Select all on this page"
-                className="w-4 h-4 cursor-pointer accent-indigo-600 align-middle"
+                className="w-4 h-4 cursor-pointer accent-blue-600 align-middle"
                 checked={allOnPage}
                 disabled={selectable.length === 0}
                 ref={(el) => {
@@ -221,7 +221,7 @@ export default function Applications() {
                   type="checkbox"
                   aria-label={`Select ${app.name}`}
                   title={app.status === "ARCHIVED" ? "Already archived" : undefined}
-                  className="w-4 h-4 cursor-pointer disabled:cursor-not-allowed accent-indigo-600 align-middle"
+                  className="w-4 h-4 cursor-pointer disabled:cursor-not-allowed accent-blue-600 align-middle"
                   checked={selected.has(app.id)}
                   disabled={app.status === "ARCHIVED"}
                   onChange={(e) => toggle(app, e.target.checked)}

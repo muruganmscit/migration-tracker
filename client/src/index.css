@@ -15,23 +15,23 @@
   --slate-800: 30 41 59;
   --slate-900: 15 23 42;
   --surface: 255 255 255;
-  --edge: #dfe4ec;
-  --page-base: #f1f4f9;
+  --edge: #dcdfe5;
+  --page-base: #f4f5f7;
   --panel-bg: #ffffff;
-  --panel-border: #dfe4ec;
-  --panel-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-  --panel-shadow-hover: 0 6px 16px rgba(15, 23, 42, 0.1);
+  --panel-border: #dcdfe5;
+  --panel-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   --track: rgba(15, 23, 42, 0.12);
   --chart-axis: #cbd5e1;
   --chart-tick: #475569;
   --chart-grid: rgba(15, 23, 42, 0.08);
   --chart-legend: #334155;
   --tooltip-bg: #ffffff;
-  --tooltip-border: #dfe4ec;
+  --tooltip-border: #dcdfe5;
   --tooltip-text: #0f172a;
 }
 
 body {
+  font-size: 14px;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: var(--page-base);
   color: rgb(var(--slate-900));
@@ -44,20 +44,10 @@ body {
     border: 1px solid var(--panel-border);
     box-shadow: var(--panel-shadow);
   }
-  .panel-lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .panel-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--panel-shadow-hover);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
-  }
-  .panel-lift:hover {
-    transform: none;
   }
 }

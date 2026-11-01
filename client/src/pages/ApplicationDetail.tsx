@@ -48,14 +48,6 @@ export default function ApplicationDetail() {
   const [reposTechnology, setReposTechnology] = useState("");
   const [reposPipelineType, setReposPipelineType] = useState("");
   const [newRecipient, setNewRecipient] = useState({ email: "", name: "" });
-  const [newRepo, setNewRepo] = useState({
-    name: "",
-    sourceUrl: "",
-    targetProject: "",
-    technology: "",
-    technologyVersion: "",
-    pipelineType: "",
-  });
   const [showAddRepo, setShowAddRepo] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   // Kept by id, so a selection survives moving between pages and filters.
@@ -144,21 +136,6 @@ export default function ApplicationDetail() {
     load();
   }
 
-  async function addRepo() {
-    if (!newRepo.name || !newRepo.sourceUrl) return;
-    const ok = await act(() =>
-      ApplicationsApi.repos.create(appId, {
-        ...newRepo,
-        technology: (newRepo.technology || undefined) as Repo["technology"] | undefined,
-        pipelineType: (newRepo.pipelineType || undefined) as Repo["pipelineType"] | undefined,
-      })
-    );
-    if (ok) {
-      setNewRepo({ name: "", sourceUrl: "", targetProject: "", technology: "", technologyVersion: "", pipelineType: "" });
-      setShowAddRepo(false);
-    }
-  }
-
   const archived = app.status === "ARCHIVED";
   const cleanupOpen = !archived && !!app.cleanupStartedAt && !app.cleanupEndedAt;
   const refreshAll = () => {
@@ -199,7 +176,7 @@ export default function ApplicationDetail() {
           </span>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-lg font-semibold text-slate-900 truncate">{app.name}</h3>
+              <h3 className="text-base font-semibold text-slate-900 truncate">{app.name}</h3>
               <span className={badgeClass(app.status)}>{statusLabel(app.status)}</span>
               {app.wave && <span className="text-xs text-slate-400">Wave {app.wave.number}</span>}
             </div>
@@ -308,9 +285,9 @@ export default function ApplicationDetail() {
 
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 xl:gap-x-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 xl:gap-x-4">
       <div className={`${card} xl:col-span-2`} data-testid="workflow">
-        <h3 className="text-base font-semibold text-slate-800 mb-1">Workflow</h3>
+        <h3 className="text-sm font-semibold text-slate-800 mb-1">Workflow</h3>
         <p className="text-sm text-slate-500 mb-5">
           {archived
             ? "This application was archived and will not be migrated."
@@ -336,7 +313,7 @@ export default function ApplicationDetail() {
           </Notice>
         ))}
         {actionError && (
-          <div role="alert" className="flex items-start gap-2 rounded-xl bg-rose-100 text-rose-700 text-sm px-3 py-2 mb-3">
+          <div role="alert" className="flex items-start gap-2 rounded-md bg-rose-100 text-rose-700 text-sm px-3 py-2 mb-3">
             <AlertTriangle size={16} className="shrink-0 mt-0.5" />
             <span className="flex-1">{actionError}</span>
             <button onClick={() => setActionError(null)} aria-label="Dismiss error">
@@ -429,14 +406,14 @@ export default function ApplicationDetail() {
           </>
         )}
       </div>
-      <div className={`${card} xl:!mb-6 flex flex-col`}>
-        <h3 className="text-base font-semibold mb-4 text-slate-800">Recipients</h3>
+      <div className={`${card} xl:!mb-4 flex flex-col`}>
+        <h3 className="text-sm font-semibold mb-4 text-slate-800">Recipients</h3>
         {recipients.length === 0 ? (
           <EmptyState icon={Mail} title="No recipients yet" description="Add at least one email address to receive notifications." />
         ) : (
           <ul className="space-y-2 mb-4 max-h-72 overflow-y-auto">
             {recipients.map((r) => (
-              <li key={r.id} className="flex items-center gap-2 rounded-xl bg-slate-50 border border-edge pl-3 pr-1.5 py-1.5">
+              <li key={r.id} className="flex items-center gap-2 rounded-md bg-slate-50 border border-edge pl-3 pr-1.5 py-1.5">
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-slate-800 break-words">{r.email}</div>
                   {r.name && <div className="text-xs text-slate-500 break-words">{r.name}</div>}
@@ -477,9 +454,9 @@ export default function ApplicationDetail() {
 
       <div className={card}>
         <div className={`${row} justify-between`}>
-          <h3 className="text-base font-semibold text-slate-800">Repos</h3>
+          <h3 className="text-sm font-semibold text-slate-800">Repos</h3>
           {!archived && (
-            <button className={btn} onClick={() => setShowAddRepo((v) => !v)}>
+            <button className={btn} onClick={() => setShowAddRepo(true)}>
               <Plus size={16} /> Add repo
             </button>
           )}
@@ -517,54 +494,14 @@ export default function ApplicationDetail() {
           </select>
         </div>
         {showAddRepo && (
-          <div className={`${row} mt-4`}>
-            <input className={inputClass} placeholder="name" value={newRepo.name} onChange={(e) => setNewRepo({ ...newRepo, name: e.target.value })} />
-            <input
-              className={inputClass}
-              placeholder="sourceUrl (required)"
-              value={newRepo.sourceUrl}
-              onChange={(e) => setNewRepo({ ...newRepo, sourceUrl: e.target.value })}
-            />
-            <input
-              className={inputClass}
-              placeholder="targetProject"
-              value={newRepo.targetProject}
-              onChange={(e) => setNewRepo({ ...newRepo, targetProject: e.target.value })}
-            />
-            <select
-              className={inputClass}
-              value={newRepo.technology}
-              onChange={(e) => setNewRepo({ ...newRepo, technology: e.target.value })}
-            >
-              <option value="">Technology…</option>
-              {TECHNOLOGIES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-            <input
-              className={inputClass}
-              placeholder="tech version"
-              value={newRepo.technologyVersion}
-              onChange={(e) => setNewRepo({ ...newRepo, technologyVersion: e.target.value })}
-            />
-            <select
-              className={inputClass}
-              value={newRepo.pipelineType}
-              onChange={(e) => setNewRepo({ ...newRepo, pipelineType: e.target.value })}
-            >
-              <option value="">Pipeline type…</option>
-              {PIPELINE_TYPES.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-            <button className={btn} onClick={addRepo}>
-              Add
-            </button>
-          </div>
+          <AddRepoDialog
+            appId={appId}
+            onClose={() => setShowAddRepo(false)}
+            onAdded={() => {
+              setShowAddRepo(false);
+              refreshAll();
+            }}
+          />
         )}
         {selectedRepos.size > 0 && (
           <div role="region" aria-label="Repo bulk actions" className={`${tile} ${row} !py-3 mt-4 sticky top-4 z-10`}>
@@ -572,7 +509,7 @@ export default function ApplicationDetail() {
             <button className={btn} onClick={() => setShowBulkStatus(true)}>
               Update status
             </button>
-            <button className="text-sm text-indigo-600 underline" onClick={() => setSelectedRepos(new Map())}>
+            <button className="text-sm text-blue-700 underline" onClick={() => setSelectedRepos(new Map())}>
               Clear selection
             </button>
           </div>
@@ -590,7 +527,7 @@ export default function ApplicationDetail() {
           />
         )}
         {bulkMessage && (
-          <div role="status" className="flex items-start gap-2 rounded-xl bg-slate-100 text-slate-700 text-sm px-3 py-2 mt-4">
+          <div role="status" className="flex items-start gap-2 rounded-md bg-slate-100 text-slate-700 text-sm px-3 py-2 mt-4">
             <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
             <div className="flex-1">
               {bulkMessage.text}
@@ -616,7 +553,7 @@ export default function ApplicationDetail() {
                   <input
                     type="checkbox"
                     aria-label="Select all repos on this page"
-                    className="w-4 h-4 cursor-pointer accent-indigo-600 align-middle"
+                    className="w-4 h-4 cursor-pointer accent-blue-600 align-middle"
                     checked={allReposOnPage}
                     disabled={repos.length === 0}
                     ref={(el) => {
@@ -658,7 +595,7 @@ export default function ApplicationDetail() {
       </div>
 
       <div className={card}>
-        <h3 className="text-base font-semibold mb-5 text-slate-800">Email history</h3>
+        <h3 className="text-sm font-semibold mb-5 text-slate-800">Email history</h3>
         <div className={tableWrap}>
         <table className={table}>
           <thead>
@@ -694,7 +631,7 @@ export default function ApplicationDetail() {
 function Notice({ icon: Icon, tone, children }: { icon: typeof Archive; tone: "amber" | "slate"; children: React.ReactNode }) {
   const colors = tone === "amber" ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-700";
   return (
-    <div className={`flex items-start gap-2 rounded-xl text-sm px-3 py-2 mb-3 ${colors}`}>
+    <div className={`flex items-start gap-2 rounded-md text-sm px-3 py-2 mb-3 ${colors}`}>
       <Icon size={16} className="shrink-0 mt-0.5" />
       <span>{children}</span>
     </div>
@@ -742,7 +679,7 @@ function CleanupDecisionCell({ repo, onChange }: { repo: Repo; onChange: () => v
         <span className={badgeClass(repo.cleanupDecision)} title={repo.cleanupReason ?? undefined}>
           {statusLabel(repo.cleanupDecision)}
         </span>
-        <button className="text-xs text-indigo-600 underline" onClick={() => decide(null)}>
+        <button className="text-xs text-blue-700 underline" onClick={() => decide(null)}>
           Change
         </button>
       </div>
@@ -758,6 +695,103 @@ function CleanupDecisionCell({ repo, onChange }: { repo: Repo; onChange: () => v
       </button>
       {error && <span className="text-xs text-rose-700">{error}</span>}
     </div>
+  );
+}
+
+function AddRepoDialog({ appId, onClose, onAdded }: { appId: number; onClose: () => void; onAdded: () => void }) {
+  const [form, setForm] = useState({ name: "", sourceUrl: "", targetProject: "", technology: "", technologyVersion: "", pipelineType: "", notes: "" });
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const canSave = !saving && !!form.name.trim() && !!form.sourceUrl.trim();
+  const field = "flex flex-col gap-1.5 text-sm text-slate-500";
+  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setForm({ ...form, [key]: e.target.value });
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    if (!canSave) return;
+    setError(null);
+    setSaving(true);
+    try {
+      await ApplicationsApi.repos.create(appId, {
+        name: form.name.trim(),
+        sourceUrl: form.sourceUrl.trim(),
+        targetProject: form.targetProject.trim() || undefined,
+        technology: (form.technology || undefined) as Repo["technology"] | undefined,
+        technologyVersion: form.technologyVersion.trim() || undefined,
+        pipelineType: (form.pipelineType || undefined) as Repo["pipelineType"] | undefined,
+        notes: form.notes.trim() || undefined,
+      });
+      onAdded();
+    } catch (err) {
+      setError(errorMessage(err));
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog title="Add repo" onClose={onClose}>
+      <form onSubmit={save}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className={field}>
+            Name (required)
+            <input className={`${inputClass} w-full`} value={form.name} onChange={set("name")} />
+          </label>
+          <label className={field}>
+            Target Project
+            <input className={`${inputClass} w-full`} value={form.targetProject} onChange={set("targetProject")} />
+          </label>
+          <label className={`${field} sm:col-span-2`}>
+            Source URL (required)
+            <input className={`${inputClass} w-full`} value={form.sourceUrl} onChange={set("sourceUrl")} />
+          </label>
+          <label className={field}>
+            Technology
+            <select className={`${inputClass} w-full`} value={form.technology} onChange={set("technology")}>
+              <option value="">—</option>
+              {TECHNOLOGIES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className={field}>
+            Version
+            <input className={`${inputClass} w-full`} value={form.technologyVersion} onChange={set("technologyVersion")} />
+          </label>
+          <label className={`${field} sm:col-span-2`}>
+            Pipeline Type
+            <select className={`${inputClass} w-full`} value={form.pipelineType} onChange={set("pipelineType")}>
+              <option value="">—</option>
+              {PIPELINE_TYPES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className={`${field} sm:col-span-2`}>
+            Notes
+            <textarea className={`${inputClass} w-full h-20`} value={form.notes} onChange={set("notes")} />
+          </label>
+        </div>
+        <p className="text-xs text-slate-500 mt-4">It starts as Not started. If the application has already moved past Migration, adding a repo reopens that phase.</p>
+        {error && (
+          <div role="alert" className="rounded-md bg-rose-100 text-rose-700 text-sm px-3 py-2 mt-4">
+            {error}
+          </div>
+        )}
+        <div className="flex justify-end gap-2 mt-5">
+          <button type="button" className={btnSecondary} onClick={onClose}>
+            Cancel
+          </button>
+          <button type="submit" className={btn} disabled={!canSave}>
+            {saving ? "Adding…" : "Add repo"}
+          </button>
+        </div>
+      </form>
+    </Dialog>
   );
 }
 
@@ -866,7 +900,7 @@ function EditRepoDialog({ repo, onClose, onSaved }: { repo: Repo; onClose: () =>
           </label>
         </div>
         {saveError && (
-          <div role="alert" className="rounded-xl bg-rose-100 text-rose-700 text-sm px-3 py-2 mt-4">
+          <div role="alert" className="rounded-md bg-rose-100 text-rose-700 text-sm px-3 py-2 mt-4">
             {saveError}
           </div>
         )}
@@ -914,7 +948,7 @@ function MarkInactiveDialog({ app, onClose, onDone }: { app: Application; onClos
           <input className={`${inputClass} w-full`} value={reason} onChange={(e) => setReason(e.target.value)} />
         </label>
         {error && (
-          <div role="alert" className="rounded-xl bg-rose-100 text-rose-700 text-sm px-3 py-2">
+          <div role="alert" className="rounded-md bg-rose-100 text-rose-700 text-sm px-3 py-2">
             {error}
           </div>
         )}
@@ -972,7 +1006,7 @@ function BulkRepoStatusDialog({
   return (
     <Dialog title={`Update status for ${count(repos.length)}`} onClose={onClose}>
       <form onSubmit={confirm} className="space-y-4">
-        <ul className="text-sm text-slate-700 max-h-48 overflow-y-auto rounded-xl bg-slate-50 border border-edge px-3 py-2 space-y-1">
+        <ul className="text-sm text-slate-700 max-h-48 overflow-y-auto rounded-md bg-slate-50 border border-edge px-3 py-2 space-y-1">
           {repos.map((x) => (
             <li key={x.id} className="flex items-center justify-between gap-3">
               <span className="break-words min-w-0">{x.name}</span>
@@ -1000,7 +1034,7 @@ function BulkRepoStatusDialog({
         )}
         <p className="text-xs text-slate-500">If this starts a new phase or completes the application, recipients get one email for the whole update.</p>
         {error && (
-          <div role="alert" className="rounded-xl bg-rose-100 text-rose-700 text-sm px-3 py-2">
+          <div role="alert" className="rounded-md bg-rose-100 text-rose-700 text-sm px-3 py-2">
             {error}
           </div>
         )}
@@ -1065,16 +1099,18 @@ function RepoRow({
             <input
               type="checkbox"
               aria-label={`Select ${repo.name}`}
-              className="w-4 h-4 cursor-pointer accent-indigo-600 align-middle"
+              className="w-4 h-4 cursor-pointer accent-blue-600 align-middle"
               checked={selected}
               onChange={(e) => onSelect(e.target.checked)}
             />
           </td>
         )}
         <td className={td}>
-          <b className="text-slate-900">{repo.name}</b>
+          <b className="text-slate-900 font-medium whitespace-nowrap">{repo.name}</b>
         </td>
-        <td className={`${td} text-slate-500`}>{repo.sourceUrl}</td>
+        <td className={`${td} text-slate-500 max-w-[240px] truncate`} title={repo.sourceUrl}>
+          {repo.sourceUrl}
+        </td>
         <td className={td}>{repo.technology ?? <span className="text-slate-400">—</span>}</td>
         <td className={td}>{repo.technologyVersion ?? <span className="text-slate-400">—</span>}</td>
         <td className={td}>{repo.pipelineType ?? <span className="text-slate-400">—</span>}</td>
@@ -1087,7 +1123,7 @@ function RepoRow({
           </td>
         )}
         <td className={td}>
-          <div className={row}>
+          <div className="flex gap-2 items-center justify-end">
             {!readOnly && (
               <button className={btnSecondary} onClick={() => setEdit(true)}>
                 Edit

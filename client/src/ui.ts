@@ -1,22 +1,22 @@
 import { createElement } from "react";
 
-// Design tokens: solid panels on a plain page background, with indigo accents and tinted status pills.
-// Shared colours are CSS variables (index.css).
+// Design tokens: a restrained enterprise look. Flat bordered panels on a neutral page, one blue accent,
+// compact spacing, and colour reserved for status. Shared colours are CSS variables (index.css).
 
-export const card = "panel rounded-3xl p-6 mb-6";
-export const statCard = "panel panel-lift rounded-3xl p-5";
-export const tile = "bg-slate-50 border border-edge rounded-2xl p-5";
+export const card = "panel rounded-lg p-5 mb-4";
+export const statCard = "panel rounded-lg p-4";
+export const tile = "bg-slate-50 border border-edge rounded-md p-4";
 
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2";
-export const btn = `cursor-pointer inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-violet-600 shadow-md shadow-indigo-500/25 hover:shadow-lg hover:shadow-indigo-500/35 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition ${focusRing}`;
-export const btnSecondary = `cursor-pointer inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium bg-surface text-slate-700 border border-slate-500/40 shadow-sm hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition ${focusRing}`;
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1";
+export const btn = `cursor-pointer inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${focusRing}`;
+export const btnSecondary = `cursor-pointer inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium bg-surface text-slate-700 border border-slate-500/40 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${focusRing}`;
 export const input =
-  "border border-slate-500/60 rounded-xl px-3 py-2 text-sm bg-surface text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition";
-export const row = "flex gap-3 items-center flex-wrap";
+  "border border-slate-500/50 rounded-md px-2.5 py-1.5 text-sm bg-surface text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 transition-colors";
+export const row = "flex gap-2 items-center flex-wrap";
 export const table = "w-full border-collapse";
-export const th = "text-left text-xs font-semibold uppercase tracking-wide bg-slate-50 text-slate-600 px-4 py-3 border-b border-slate-900/10 whitespace-nowrap";
-export const td = "text-left text-sm text-slate-700 px-4 py-3.5 border-b border-slate-900/5";
-export const tableWrap = "overflow-x-auto rounded-2xl border border-edge";
+export const th = "text-left text-xs font-semibold text-slate-600 bg-slate-50 px-3 py-2 border-b border-edge whitespace-nowrap";
+export const td = "text-left text-sm text-slate-700 px-3 py-2 border-b border-slate-900/5";
+export const tableWrap = "overflow-x-auto rounded-md border border-edge";
 
 // "NOT_STARTED" -> "Not started"
 export function statusLabel(value: string): string {
@@ -60,7 +60,7 @@ const PROGRESS_BAR_COLORS: Record<string, string> = {
   AT_RISK: "bg-amber-500",
   OVERDUE: "bg-rose-500",
   COMPLETE: "bg-emerald-500",
-  UNSCHEDULED: "bg-indigo-500",
+  UNSCHEDULED: "bg-blue-600",
   ARCHIVED: "bg-slate-400",
 };
 
@@ -71,7 +71,7 @@ export const WARNING_TEXT: Record<string, string> = {
 };
 
 export function progressBarColor(health: string): string {
-  return PROGRESS_BAR_COLORS[health] ?? "bg-indigo-500";
+  return PROGRESS_BAR_COLORS[health] ?? "bg-blue-600";
 }
 
 // Hex equivalents of PROGRESS_BAR_COLORS, for contexts (e.g. SVG stroke) where a Tailwind
@@ -81,34 +81,25 @@ const PROGRESS_HEX_COLORS: Record<string, string> = {
   AT_RISK: "#f59e0b",
   OVERDUE: "#f43f5e",
   COMPLETE: "#10b981",
-  UNSCHEDULED: "#6366f1",
+  UNSCHEDULED: "#2563eb",
   ARCHIVED: "#94a3b8",
 };
 
 export function progressHexColor(health?: string): string {
-  return (health && PROGRESS_HEX_COLORS[health]) ?? "#6366f1";
+  return (health && PROGRESS_HEX_COLORS[health]) ?? "#2563eb";
 }
 
 export const formatHealth = statusLabel;
 
 export function badgeClass(value: string): string {
   const color = BADGE_COLORS[value] ?? "bg-slate-100 text-slate-600";
-  return `inline-block whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-semibold ${color}`;
+  return `inline-block whitespace-nowrap px-2 py-0.5 rounded text-xs font-medium ${color}`;
 }
 
 // Solid rounded-square icon chips, e.g. for stat tiles.
-const ICON_BG_COLORS: Record<string, string> = {
-  indigo: "from-indigo-500 to-violet-600",
-  emerald: "from-emerald-400 to-teal-600",
-  rose: "from-rose-400 to-pink-600",
-  amber: "from-amber-400 to-orange-500",
-  sky: "from-sky-400 to-blue-600",
-  fuchsia: "from-fuchsia-500 to-purple-600",
-  slate: "from-slate-400 to-slate-500",
-};
 
-export function iconBadge(color: keyof typeof ICON_BG_COLORS): string {
-  return `flex items-center justify-center w-11 h-11 rounded-2xl text-white shadow-md bg-gradient-to-br ${ICON_BG_COLORS[color]}`;
+export function iconBadge(_color?: string): string {
+  return "flex items-center justify-center w-9 h-9 rounded-md bg-slate-100 text-slate-600 shrink-0";
 }
 
 // Chart palette tuned for white cards.

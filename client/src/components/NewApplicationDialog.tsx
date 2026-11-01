@@ -85,7 +85,7 @@ export default function NewApplicationDialog({ onClose, onCreated }: { onClose: 
         {datesBackward && <p className="text-sm text-rose-700 mt-3">Target start must be on or before target end.</p>}
         <p className="text-xs text-slate-500 mt-4">It starts at Not started. Add repos and recipients on the next page, then start Cleanup when you're ready.</p>
         {error && (
-          <div role="alert" className="rounded-xl bg-rose-100 text-rose-700 text-sm px-3 py-2 mt-4">
+          <div role="alert" className="rounded-md bg-rose-100 text-rose-700 text-sm px-3 py-2 mt-4">
             {error}
           </div>
         )}
