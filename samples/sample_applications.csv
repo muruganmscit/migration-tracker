@@ -1,0 +1,13 @@
+appId,name,owner,teamContact,status,wave,targetStartDate,targetDate,proposedTargetDate,cleanupStartedAt,cleanupEndedAt
+APP-501,Inventory Service,Maria Gonzalez,inventory-team@example.com,ACTIVE,1,2026-09-01,2026-11-15,2026-10-30,,
+APP-502,Auth Gateway,Ravi Patel,auth-team@example.com,ACTIVE,1,2026-09-01,2026-11-20,2026-11-05,,
+APP-503,Customer Support Portal,Emily Chen,support-team@example.com,ACTIVE,1,2026-09-01,2026-12-01,2026-11-10,,
+APP-504,Order Management,Tom Walsh,orders-team@example.com,ACTIVE,2,2026-11-01,2027-01-15,2026-12-20,,
+APP-505,CRM Core,Priya Sharma,crm-team@example.com,ACTIVE,2,2026-11-01,2027-01-30,2027-01-10,,
+APP-506,HR Portal,James Okafor,hr-team@example.com,ACTIVE,2,2026-11-01,2027-02-10,2027-01-25,,
+APP-507,Analytics Engine,Lena Fischer,analytics-team@example.com,ACTIVE,3,2027-01-04,2027-03-01,2027-02-15,,
+APP-508,Reporting Service,Noah Kim,reporting-team@example.com,ACTIVE,3,2027-01-04,2027-03-15,2027-02-28,,
+APP-509,Invoice Generator,Sofia Rossi,finance-team@example.com,ACTIVE,3,2027-01-04,,2027-03-01,,
+APP-510,Fraud Detection,David Okoye,risk-team@example.com,ACTIVE,4,2027-03-01,2027-05-01,2027-04-10,,
+APP-511,Loyalty Rewards,Grace Liu,loyalty-team@example.com,ACTIVE,4,2027-03-01,2027-05-15,2027-04-25,,
+APP-512,Legacy Mainframe Bridge,Hector Diaz,legacy-team@example.com,ACTIVE,4,2027-03-01,,,,

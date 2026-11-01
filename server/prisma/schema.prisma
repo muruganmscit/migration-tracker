@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AppStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+// An application's current phase. Archived is an outcome held on Application.status.
+enum MigrationStatus {
+  NOT_STARTED
+  CLEANUP
+  MIGRATION
+  VALIDATION
+  ADOPTION
+  COMPLETE
+}
+
+enum EmailEvent {
+  CLEANUP_STARTED
+  CLEANUP_COMPLETED
+  MIGRATION_STARTED
+  MIGRATION_COMPLETED
+  VALIDATION_STARTED
+  VALIDATION_COMPLETED
+  ADOPTION_STARTED
+  ADOPTION_COMPLETED
+  PHASE_REOPENED
+  APPLICATION_ARCHIVED
+  PHASE_OVERRIDDEN
+}
+
+enum CleanupDecision {
+  KEEP
+  ARCHIVE
+}
+
+enum RepoStatus {
+  NOT_STARTED
+  MIGRATING
+  MIGRATED
+  VALIDATING
+  VALIDATED
+  ADOPTED
+  ARCHIVED
+}
+
+enum TriggerType {
+  AUTO
+  MANUAL
+}
+
+enum SendStatus {
+  SENT
+  FAILED
+}
+
+enum Technology {
+  JAVA
+  NODEJS
+  PYTHON
+  DOTNET
+  GO
+  OTHERS
+}
+
+enum PipelineType {
+  DEFAULT_NODE
+  DEFAULT_JAVA
+  DEFAULT_PYTHON
+  DEFAULT_DOTNET
+  DEFAULT_GO
+  CUSTOM
+}
+
+model Wave {
+  id                 Int       @id @default(autoincrement())
+  number             Int       @unique // 1-4
+  targetStartDate    DateTime?
+  targetDate         DateTime? // target end
+  proposedTargetDate DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  applications Application[]
+}
+
+model Application {
+  id                            Int             @id @default(autoincrement())
+  appId                         String          @unique
+  name                          String
+  owner                         String
+  teamContact                   String
+  status                        AppStatus       @default(ACTIVE)
+  waveId                        Int?
+  wave                          Wave?           @relation(fields: [waveId], references: [id])
+  targetStartDate               DateTime?
+  targetDate                    DateTime? // target end
+  proposedTargetDate            DateTime?
+  migrationStatus               MigrationStatus @default(NOT_STARTED)
+  migrationStatusManualOverride Boolean         @default(false)
+  overrideReason                String?
+  cleanupStartedAt              DateTime?
+  cleanupEndedAt                DateTime?
+  migrationStartedAt            DateTime?
+  migrationEndedAt              DateTime?
+  validationStartedAt           DateTime?
+  validationEndedAt             DateTime?
+  adoptionStartedAt             DateTime?
+  adoptionEndedAt               DateTime?
+  archivedAt                    DateTime?
+  archiveReason                 String?
+  createdAt                     DateTime        @default(now())
+  updatedAt                     DateTime        @updatedAt
+
+  repos      Repo[]
+  recipients Recipient[]
+  emailLogs  EmailLog[]
+}
+
+model Recipient {
+  id            Int         @id @default(autoincrement())
+  applicationId Int
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  email         String
+  name          String?
+  createdAt     DateTime    @default(now())
+
+  @@unique([applicationId, email])
+}
+
+model Repo {
+  id            Int         @id @default(autoincrement())
+  applicationId Int
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  name              String
+  sourceUrl         String
+  targetProject     String?
+  technology        Technology?
+  technologyVersion String?
+  pipelineType      PipelineType?
+  status            RepoStatus  @default(NOT_STARTED)
+  startedAt     DateTime?
+  completedAt   DateTime?
+  notes         String?
+  cleanupDecision CleanupDecision?
+  cleanupReason   String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  statusHistory StatusHistory[]
+  issues        Issue[]
+
+  @@unique([applicationId, name])
+}
+
+model StatusHistory {
+  id        Int        @id @default(autoincrement())
+  repoId    Int
+  repo      Repo       @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  status    RepoStatus
+  note      String?
+  changedAt DateTime   @default(now())
+}
+
+model Issue {
+  id          Int       @id @default(autoincrement())
+  repoId      Int
+  repo        Repo      @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  isResolved  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  resolvedAt  DateTime?
+}
+
+model EmailTemplate {
+  id        Int             @id @default(autoincrement())
+  event     EmailEvent      @unique
+  subject   String
+  bodyHtml  String
+  updatedAt DateTime        @updatedAt
+}
+
+model EmailLog {
+  id            Int             @id @default(autoincrement())
+  applicationId Int
+  application   Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  event         String // EmailEvent, or a legacy event name on older rows
+  recipients    String
+  triggeredBy   TriggerType
+  status        SendStatus
+  errorMessage  String?
+  sentAt        DateTime        @default(now())
+}
