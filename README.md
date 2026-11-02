@@ -95,9 +95,11 @@ Mail goes to the local Mailpit catcher by default. Settings are in `server/.env`
 
 ## Tests and coverage
 
-`sh server/test-coverage.sh` runs every test (workflow rules plus API tests against a real database) with coverage, and fails below 85% lines. It runs in a throwaway container against a separate `harness_migration_portal_test` database (the tests refuse to run against any other) and sends mail only to Mailpit.
+`cd server && npm test` runs every server test locally with coverage, and fails below 85% lines. No database, container or mail server is needed: Prisma is replaced by an in-memory mock (prismock, built from `schema.prisma`) and email goes to a transport that only records messages. `npm run test:unit` runs just the workflow-rule tests.
 
 It writes `server/coverage/lcov.info` (LCOV, for SonarQube) and an HTML report in `server/coverage/lcov-report/`. `server/sonar-project.properties` points the scanner at the LCOV file; run `sonar-scanner` from `server/`. Startup and data-loading scripts (`src/index.ts`, `src/seed.ts`, `src/scripts/`) are excluded from coverage.
+
+For the client, run `cd client && npm run test:coverage`. It runs the page and component tests (Vitest and React Testing Library) against a fake API, so no server is needed, and also fails below 85% lines. It writes `client/coverage/lcov.info` for SonarQube, which `client/sonar-project.properties` points to. `src/main.tsx` and the hidden `src/pages/Reports.tsx` are excluded from coverage.
 
 ## Sample data
 

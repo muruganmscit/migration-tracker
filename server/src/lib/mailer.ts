@@ -2,7 +2,8 @@ import nodemailer from "nodemailer";
 
 const port = Number(process.env.SMTP_PORT || 587);
 
-export const transport = nodemailer.createTransport({
+// EMAIL_TRANSPORT=memory (used by the tests) records messages instead of sending them.
+export const transport = process.env.EMAIL_TRANSPORT === "memory" ? nodemailer.createTransport({ jsonTransport: true }) : nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port,
   secure: port === 465,

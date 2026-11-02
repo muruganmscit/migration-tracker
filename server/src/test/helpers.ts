@@ -4,10 +4,13 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 
-const url = process.env.DATABASE_URL ?? "";
-if (!/_test(\?|$)/.test(url)) {
-  throw new Error(`Refusing to run: DATABASE_URL must point at a database ending in "_test" (got "${url.replace(/\/\/[^@]*@/, "//***@")}")`);
-}
+// Tests never touch a real database or mail server: Prisma is replaced by an in-memory mock (prismock,
+// built from schema.prisma), and email goes to a transport that only records messages.
+process.env.EMAIL_TRANSPORT = "memory";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { PrismockClient } = require("prismock");
+const mockPrisma = new PrismockClient();
+require.cache[require.resolve("../lib/prisma")] = { exports: { prisma: mockPrisma } } as NodeModule;
 
 // A stand-in client build, so static serving and deep links are exercised too.
 export const clientDist = fs.mkdtempSync(path.join(os.tmpdir(), "portal-client-"));
@@ -17,8 +20,11 @@ process.env.CLIENT_DIST = clientDist;
 import { EmailEvent } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 
+// Stop before any test runs if the app would reach a real database instead of the mock.
+if (prisma !== mockPrisma) throw new Error("Refusing to run: the Prisma mock is not in place");
+
 export async function resetDb() {
-  await prisma.$executeRawUnsafe('TRUNCATE "Application" RESTART IDENTITY CASCADE');
+  mockPrisma.reset();
   for (const number of [1, 2, 3, 4]) {
     await prisma.wave.upsert({ where: { number }, update: { targetStartDate: null, targetDate: null, proposedTargetDate: null }, create: { number } });
   }
