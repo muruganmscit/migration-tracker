@@ -3,11 +3,11 @@ import { prisma } from "./prisma";
 export const WAVE_MIN = 1;
 export const WAVE_MAX = 4;
 
-// Resolves a wave number (1-4) to its Wave.id. Returns null to clear the assignment,
-// or undefined to leave the field untouched (used for partial updates/imports).
-export async function resolveWaveId(raw: unknown): Promise<number | null | undefined> {
+// Resolves a wave number (1-4) to its Wave.id. Every application needs a wave, so clearing one is refused.
+// Returns undefined to leave the field untouched (used for partial updates).
+export async function resolveWaveId(raw: unknown): Promise<number | undefined> {
   if (raw === undefined) return undefined;
-  if (raw === null || raw === "") return null;
+  if (raw === null || raw === "") throw new Error("wave is required");
   const value = Number(raw);
   if (!Number.isInteger(value) || value < WAVE_MIN || value > WAVE_MAX) {
     throw new Error(`wave must be an integer between ${WAVE_MIN} and ${WAVE_MAX}`);

@@ -99,8 +99,8 @@ model Application {
   owner                         String
   teamContact                   String
   status                        AppStatus       @default(ACTIVE)
-  waveId                        Int?
-  wave                          Wave?           @relation(fields: [waveId], references: [id])
+  waveId                        Int
+  wave                          Wave           @relation(fields: [waveId], references: [id])
   targetStartDate               DateTime?
   targetDate                    DateTime? // target end
   proposedTargetDate            DateTime?

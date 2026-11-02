@@ -13,7 +13,7 @@ export default function NewApplicationDialog({ onClose, onCreated }: { onClose: 
   const set = (key: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [key]: e.target.value });
 
   const datesBackward = !!form.targetStartDate && !!form.targetDate && form.targetStartDate > form.targetDate;
-  const canSave = !saving && !datesBackward && !!form.appId.trim() && !!form.name.trim() && !!form.owner.trim() && !!form.teamContact.trim();
+  const canSave = !saving && !datesBackward && !!form.appId.trim() && !!form.name.trim() && !!form.owner.trim() && !!form.teamContact.trim() && !!form.wave;
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -26,7 +26,7 @@ export default function NewApplicationDialog({ onClose, onCreated }: { onClose: 
         name: form.name.trim(),
         owner: form.owner.trim(),
         teamContact: form.teamContact.trim(),
-        wave: form.wave ? Number(form.wave) : undefined,
+        wave: Number(form.wave),
         targetStartDate: form.targetStartDate || undefined,
         targetDate: form.targetDate || undefined,
         proposedTargetDate: form.proposedTargetDate || undefined,
@@ -59,9 +59,11 @@ export default function NewApplicationDialog({ onClose, onCreated }: { onClose: 
             <input className={`${inputClass} w-full`} value={form.teamContact} onChange={set("teamContact")} />
           </label>
           <label className={field}>
-            Wave
+            Wave (required)
             <select className={`${inputClass} w-full`} value={form.wave} onChange={set("wave")}>
-              <option value="">No wave</option>
+              <option value="" disabled>
+                Choose a wave…
+              </option>
               {[1, 2, 3, 4].map((n) => (
                 <option key={n} value={n}>
                   Wave {n}

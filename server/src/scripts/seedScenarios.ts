@@ -18,7 +18,7 @@ interface Scenario {
   owner: string;
   team: string;
   tech: Technology;
-  wave?: number;
+  wave: number;
   targetStart?: number; // days from now
   target?: number;
   proposed?: number;
@@ -79,10 +79,10 @@ const SCENARIOS: Scenario[] = [
   { name: "Warehouse Scanner", owner: "Tom Walsh", team: "infra", tech: "DOTNET", wave: 4, cleanup: "none", archiveReason: "Marked inactive", repos: { [N]: 4 }, expect: { phase: "NOT_STARTED", health: "ARCHIVED" } },
   // Every repo was archived after Cleanup: the portal asks what should happen next.
   { name: "HR Self Service", owner: "Sofia Rossi", team: "infra", tech: "JAVA", wave: 4, cleanup: "done", repos: { [X]: 3 }, expect: { phase: "MIGRATION", health: "UNSCHEDULED", warnings: ["NO_ACTIVE_REPOS"] } },
-  // Not assigned to a wave
-  { name: "Internal Wiki", owner: "Dana Kim", team: "infra", tech: "OTHERS", cleanup: "done", repos: { [G]: 1, [V]: 2 }, expect: { phase: "MIGRATION", health: "UNSCHEDULED" } },
-  { name: "Vendor Portal", owner: "Carol Lee", team: "core", tech: "JAVA", target: -2, cleanup: "done", archiveReason: "Marked inactive", repos: { [M]: 2, [G]: 1 }, expect: { phase: "MIGRATION", health: "ARCHIVED" } },
-  { name: "Experimentation Service", owner: "Grace Liu", team: "growth", tech: "PYTHON", target: 13, cleanup: "done", repos: { [V]: 3 }, noRecipients: true, expect: { phase: "VALIDATION", health: "AT_RISK" } },
+  // Later additions
+  { name: "Internal Wiki", owner: "Dana Kim", team: "infra", tech: "OTHERS", wave: 4, cleanup: "done", repos: { [G]: 1, [V]: 2 }, expect: { phase: "MIGRATION", health: "UNSCHEDULED" } },
+  { name: "Vendor Portal", owner: "Carol Lee", team: "core", tech: "JAVA", wave: 2, target: -2, cleanup: "done", archiveReason: "Marked inactive", repos: { [M]: 2, [G]: 1 }, expect: { phase: "MIGRATION", health: "ARCHIVED" } },
+  { name: "Experimentation Service", owner: "Grace Liu", team: "growth", tech: "PYTHON", wave: 2, target: 13, cleanup: "done", repos: { [V]: 3 }, noRecipients: true, expect: { phase: "VALIDATION", health: "AT_RISK" } },
 ];
 
 // When each recorded phase date falls, for a believable timeline.
@@ -131,7 +131,7 @@ async function main() {
     await prisma.wave.upsert({ where: { number }, update: waveDates[number], create: { number, ...waveDates[number] } });
   }
   const waves = await prisma.wave.findMany();
-  const waveId = (n?: number) => waves.find((w) => w.number === n)?.id ?? null;
+  const waveId = (n: number) => waves.find((w) => w.number === n)!.id;
 
   let seq = 0;
   for (const [i, s] of SCENARIOS.entries()) {

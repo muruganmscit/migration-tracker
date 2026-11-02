@@ -12,7 +12,7 @@ const APPLICATION_COLUMNS: [string, string][] = [
   ["owner *", ""],
   ["teamContact *", ""],
   ["status", "ACTIVE. Archiving and marking inactive happen in the portal"],
-  ["wave", "1 to 4"],
+  ["wave *", "1 to 4. Required for a new application; blank keeps an existing one's wave"],
   ["targetStartDate, targetDate", "YYYY-MM-DD. Target start and end"],
   ["proposedTargetDate", "YYYY-MM-DD"],
   ["cleanupStartedAt, cleanupEndedAt", "YYYY-MM-DD. Only for applications already past that point"],

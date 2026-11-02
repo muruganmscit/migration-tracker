@@ -20,7 +20,7 @@ function withComputed<
     targetDate: Date | null;
     cleanupStartedAt: Date | null;
     cleanupEndedAt: Date | null;
-    wave?: { targetStartDate: Date | null; targetDate: Date | null } | null;
+    wave?: { targetStartDate: Date | null; targetDate: Date | null };
   },
 >(app: T) {
   const progressPercent = applicationProgressPercent(app.repos);
@@ -103,7 +103,7 @@ applicationsRouter.post("/", async (req, res) => {
   const { appId, name, owner, teamContact, status, wave, targetStartDate, targetDate, proposedTargetDate } = req.body;
   if (status && status !== "ACTIVE") return res.status(400).json({ error: "A new application starts as Active" });
   if (!appId || !name || !owner || !teamContact) {
-    return res.status(400).json({ error: "appId, name, owner, teamContact are required" });
+    return res.status(400).json({ error: "appId, name, owner, teamContact, wave are required" });
   }
   try {
     const parsedStart = parseDate(targetStartDate);
@@ -114,6 +114,7 @@ applicationsRouter.post("/", async (req, res) => {
       return res.status(400).json({ error: `An application with App ID "${appId}" already exists` });
     }
     const waveId = await resolveWaveId(wave);
+    if (waveId === undefined) return res.status(400).json({ error: "wave is required" });
     const application = await prisma.application.create({
       data: {
         appId,

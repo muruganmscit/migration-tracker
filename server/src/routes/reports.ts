@@ -41,7 +41,7 @@ reportsRouter.get("/summary", async (_req, res) => {
     return {
       appId: app.appId,
       name: app.name,
-      wave: app.wave?.number ?? null,
+      wave: app.wave.number,
       migrationStatus: app.migrationStatus,
       repoCount: app.repos.filter((r) => r.status !== "ARCHIVED").length,
       repoCounts,
@@ -149,7 +149,7 @@ reportsRouter.get("/export", async (req, res) => {
     doc.moveDown();
 
     for (const app of applications) {
-      doc.fontSize(13).text(`${app.name} (${app.appId}) — ${app.migrationStatus}${app.wave ? ` — Wave ${app.wave.number}` : ""}`);
+      doc.fontSize(13).text(`${app.name} (${app.appId}) — ${app.migrationStatus} — Wave ${app.wave.number}`);
       doc.fontSize(10).text(`Owner: ${app.owner}  Team contact: ${app.teamContact}  App status: ${app.status}`);
       doc.moveDown(0.3);
       for (const repo of app.repos) {
@@ -188,7 +188,7 @@ reportsRouter.get("/export", async (req, res) => {
       owner: app.owner,
       teamContact: app.teamContact,
       appStatus: app.status,
-      wave: app.wave?.number ?? "",
+      wave: app.wave.number,
       targetStartDate: app.targetStartDate?.toISOString().slice(0, 10) ?? "",
       targetDate: app.targetDate?.toISOString().slice(0, 10) ?? "",
       migrationStatus: app.migrationStatus,

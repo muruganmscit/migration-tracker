@@ -241,7 +241,7 @@ export default function Applications() {
               <td className={td}>
                 <span className={badgeClass(app.status)}>{statusLabel(app.status)}</span>
               </td>
-              <td className={`${td} whitespace-nowrap`}>{app.wave ? `Wave ${app.wave.number}` : <span className="text-slate-400">—</span>}</td>
+              <td className={`${td} whitespace-nowrap`}>Wave {app.wave.number}</td>
               <td className={td}>
                 {app.status === "ARCHIVED" ? (
                   <span className="text-slate-400">—</span>

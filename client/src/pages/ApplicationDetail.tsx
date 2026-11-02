@@ -178,7 +178,7 @@ export default function ApplicationDetail() {
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-base font-semibold text-slate-900 truncate">{app.name}</h3>
               <span className={badgeClass(app.status)}>{statusLabel(app.status)}</span>
-              {app.wave && <span className="text-xs text-slate-400">Wave {app.wave.number}</span>}
+              <span className="text-xs text-slate-500">Wave {app.wave.number}</span>
             </div>
             <div className="text-xs text-slate-400 font-mono mt-0.5">{app.appId}</div>
           </div>
@@ -244,10 +244,9 @@ export default function ApplicationDetail() {
             Wave
             <select
               className={`${inputClass} w-full`}
-              value={app.wave?.number ?? ""}
-              onChange={(e) => saveApp({ wave: e.target.value ? Number(e.target.value) : null })}
+              value={app.wave.number}
+              onChange={(e) => saveApp({ wave: Number(e.target.value) })}
             >
-              <option value="">No wave</option>
               <option value="1">Wave 1</option>
               <option value="2">Wave 2</option>
               <option value="3">Wave 3</option>

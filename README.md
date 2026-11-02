@@ -5,7 +5,7 @@ Tracks the migration of Applications (and their Repos) into Harness, backed by P
 ## Data model
 
 - **Wave** — one row per planned migration wave (`number` 1-4), with overall `targetStartDate`, `targetDate` (end) and `proposedTargetDate`.
-- **Application** — `appId` (business key), `name`, `owner`, `teamContact`, `status` (ACTIVE/ARCHIVED), optional `wave`, its own `targetStartDate`/`targetDate`/`proposedTargetDate`, current phase (`migrationStatus`), and actual start/end dates for each phase.
+- **Application** — `appId` (business key), `name`, `owner`, `teamContact`, `status` (ACTIVE/ARCHIVED), `wave` (required), its own `targetStartDate`/`targetDate`/`proposedTargetDate`, current phase (`migrationStatus`), and actual start/end dates for each phase.
 - **Repo** — belongs to an Application. `name`, `sourceUrl` (mandatory), `targetProject`, `status`, `cleanupDecision`, `startedAt`/`completedAt`.
 - **StatusHistory** — one row per repo status change, with the reason where one was required.
 - **Issue** — blockers/issues logged against a repo.
@@ -95,7 +95,7 @@ Mail goes to the local Mailpit catcher by default. Settings are in `server/.env`
 
 ## Sample data
 
-`docker compose exec server npm run seed:scenarios` **deletes all applications, repos, issues, recipients and email logs**, then loads 28 applications covering every phase, health state, app status and repo status, plus archiving, Cleanup decisions, overrides, a reopened phase, each warning, edge cases (no repos, no wave, no recipients), issues, and sent and failed emails. It sends no email and leaves email templates untouched. Health depends on today's date, so re-run it to refresh the dates.
+`docker compose exec server npm run seed:scenarios` **deletes all applications, repos, issues, recipients and email logs**, then loads 28 applications covering every phase, health state, app status and repo status, plus archiving, Cleanup decisions, overrides, a reopened phase, each warning, edge cases (no repos, no recipients), issues, and sent and failed emails. It sends no email and leaves email templates untouched. Health depends on today's date, so re-run it to refresh the dates.
 
 ## Importing data
 
@@ -103,6 +103,8 @@ Mail goes to the local Mailpit catcher by default. Settings are in `server/.env`
 
 - Applications: `appId, name, owner, teamContact, status, wave, targetStartDate, targetDate, proposedTargetDate, cleanupStartedAt, cleanupEndedAt`. `status` can only be `ACTIVE`, because archiving and marking inactive happen in the portal. The Cleanup dates are for applications already past that point.
 - Repos: `appId, repoName, sourceUrl, status, reason, cleanupDecision, targetProject, technology, technologyVersion, pipelineType, startedAt, completedAt, notes`. `reason` is required when archiving or moving a repo backward, and for `cleanupDecision=ARCHIVE`. `cleanupDecision` is accepted only while Cleanup is in progress.
+
+`wave` is required for a new application; a blank `wave` on an existing one keeps its current wave.
 
 New applications send no email; updates that change an existing application's phase do. Rows that break a rule are skipped and listed in the result.
 

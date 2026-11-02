@@ -81,6 +81,9 @@ async function importApplications(rows: any[], touched: Set<number>, created: Se
       if (parsedCleanupEnd && !parsedCleanupStart && !existing?.cleanupStartedAt) {
         throw new Error("cleanupEndedAt needs cleanupStartedAt");
       }
+      if (!existing && waveId === undefined) {
+        throw new Error("wave is required for a new application");
+      }
       const application = await prisma.application.upsert({
         where: { appId: String(appId) },
         create: {
@@ -89,7 +92,8 @@ async function importApplications(rows: any[], touched: Set<number>, created: Se
           owner,
           teamContact,
           status: status || undefined,
-          waveId,
+          // Prisma validates this branch on updates too, so an existing wave fills in for a blank cell.
+          waveId: (waveId ?? existing?.waveId)!,
           targetStartDate: parsedTargetStartDate,
           targetDate: parsedTargetDate,
           proposedTargetDate: parsedProposedTargetDate,

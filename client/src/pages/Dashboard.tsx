@@ -22,7 +22,7 @@ interface Summary {
   perApplication: {
     appId: string;
     name: string;
-    wave: number | null;
+    wave: number;
     migrationStatus: string;
     repoCount: number;
     repoCounts: Record<string, number>;

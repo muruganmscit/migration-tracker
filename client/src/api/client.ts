@@ -42,7 +42,7 @@ export interface Application {
   owner: string;
   teamContact: string;
   status: AppStatus;
-  wave: { id: number; number: number; targetStartDate: string | null; targetDate: string | null; proposedTargetDate: string | null } | null;
+  wave: { id: number; number: number; targetStartDate: string | null; targetDate: string | null; proposedTargetDate: string | null };
   targetStartDate: string | null;
   targetDate: string | null;
   proposedTargetDate: string | null;
@@ -130,7 +130,7 @@ export interface ApplicationInput {
   owner?: string;
   teamContact?: string;
   status?: AppStatus;
-  wave?: number | string | null;
+  wave?: number | string;
   targetStartDate?: string | null;
   targetDate?: string | null;
   proposedTargetDate?: string | null;
