@@ -63,22 +63,22 @@ An application's page can set one status on many repos at once. The reason rule 
 
 ```bash
 cd server
-cp .env.example .env                 # edit APP_BASE_URL / SMTP creds if not using the bundled services
+cp .env.example .env                 # edit SMTP settings if not using the bundled Mailpit
 
 cd ..
-docker compose up -d --build         # postgres + server (migrates, seeds, and starts the API) + mailpit
-
-cd client
-npm install
-npm run dev                          # SPA on http://localhost:5173
+docker compose up -d --build         # postgres + the portal + mailpit
 ```
+
+The portal (client and API) runs in one container at **http://localhost:4000**. The root `Dockerfile` builds the React client to static files and the Express server serves them alongside `/api`. On start it applies migrations, seeds any missing email templates, then starts the server. After code changes, rebuild with `docker compose up -d --build server`.
 
 This brings up:
 - **postgres** on `localhost:5432`
-- **server** (the API) on `localhost:4000` — on first start it runs `prisma migrate deploy` and seeds any missing `EmailTemplate` rows automatically
-- **mailpit** (local SMTP catcher) — web UI at `http://localhost:8025`, SMTP on `localhost:1025`
+- **server**, the portal, on `localhost:4000`
+- **mailpit** (local SMTP catcher), web UI at `http://localhost:8025`, SMTP on `localhost:1025`
 
-> **Why the server runs in Docker too:** on macOS, Docker Desktop's host↔VM port forwarding can silently break Prisma's Postgres connection (`P1010: User was denied access`) even though the same credentials work fine for `psql` or a raw TCP socket — it's specific to Prisma's wire-protocol handling over that forwarded port. Running the server inside the same docker-compose network (talking to `postgres:5432` directly, no host forwarding involved) avoids it entirely. If you'd rather run the server with `npm run dev` directly on the host, change `DATABASE_URL` in `.env` to use `localhost`, and know you may hit this issue.
+For live-reloading client development, also run `cd client && npm install && npm run dev` and open `http://localhost:5173`; it sends `/api` calls to the container.
+
+> **Why the API runs in Docker rather than on the host:** on macOS, Docker Desktop's host↔VM port forwarding can silently break Prisma's Postgres connection (`P1010: User was denied access`) even though the same credentials work fine for `psql` or a raw TCP socket — it's specific to Prisma's wire-protocol handling over that forwarded port. Running the server inside the same docker-compose network (talking to `postgres:5432` directly, no host forwarding involved) avoids it entirely. If you'd rather run the server with `npm run dev` directly on the host, change `DATABASE_URL` in `.env` to use `localhost`, and know you may hit this issue.
 
 To create a *new* migration after changing `prisma/schema.prisma`, run it against the same docker network rather than through the host-forwarded port:
 
@@ -88,7 +88,7 @@ docker compose exec server npx prisma migrate dev --name <description>
 
 ## Email
 
-Mail goes to the local Mailpit catcher by default. Settings are in `server/.env`, and `server/.env.example` shows the Gmail values. Apply changes with `docker compose up -d --force-recreate server`.
+Mail goes to the local Mailpit catcher by default. Settings are in `server/.env`, and `server/.env.example` shows the Gmail values. Apply changes with `docker compose up -d --force-recreate server`. `APP_BASE_URL` (the link in emails) is set in `docker-compose.yml`.
 
 - `EMAIL_REDIRECT_TO`: when set, all email goes to this one address, with the intended recipients shown in the subject. Use it while testing against a real mail server.
 - `docker compose exec server npm run email:test -- you@example.com`: checks the connection and sends one test message, without touching application data.
