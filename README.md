@@ -28,7 +28,7 @@ Repo:        Not started → Migrating → Migrated → Validating → Validated
 | Validation | First repo is Validating or beyond | All active repos are Validated or beyond |
 | Adoption | First repo is Adopted | All active repos are Adopted, which makes the application Complete |
 
-The rules live in `server/src/lib/workflow.ts` (tests: `docker compose exec server npm test`).
+The rules live in `server/src/lib/workflow.ts`.
 
 - **Current phase** is the earliest phase that hasn't ended. A person can override it with a reason; it then holds until returned to automatic.
 - **Cleanup** decides what continues. Archive decisions on repos take effect when Cleanup ends. Archiving the whole application happens during Cleanup, or at any time if it has no active repos. It needs a reason, takes every repo with it, and can't be undone in the portal.
@@ -92,6 +92,12 @@ Mail goes to the local Mailpit catcher by default. Settings are in `server/.env`
 
 - `EMAIL_REDIRECT_TO`: when set, all email goes to this one address, with the intended recipients shown in the subject. Use it while testing against a real mail server.
 - `docker compose exec server npm run email:test -- you@example.com`: checks the connection and sends one test message, without touching application data.
+
+## Tests and coverage
+
+`sh server/test-coverage.sh` runs every test (workflow rules plus API tests against a real database) with coverage, and fails below 85% lines. It runs in a throwaway container against a separate `harness_migration_portal_test` database (the tests refuse to run against any other) and sends mail only to Mailpit.
+
+It writes `server/coverage/lcov.info` (LCOV, for SonarQube) and an HTML report in `server/coverage/lcov-report/`. `server/sonar-project.properties` points the scanner at the LCOV file; run `sonar-scanner` from `server/`. Startup and data-loading scripts (`src/index.ts`, `src/seed.ts`, `src/scripts/`) are excluded from coverage.
 
 ## Sample data
 
